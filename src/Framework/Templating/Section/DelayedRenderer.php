@@ -28,6 +28,10 @@ class DelayedRenderer
             return $value;
         }
 
+        if (is_object($value) && method_exists($value, '__toString')) {
+            return (string) $value;
+        }
+
         if (is_callable($value)) {
             return $value();
         }
