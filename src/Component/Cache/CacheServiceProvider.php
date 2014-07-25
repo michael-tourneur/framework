@@ -4,6 +4,7 @@ namespace Pagekit\Component\Cache;
 
 use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\XcacheCache;
 use Pagekit\Framework\Application;
 use Pagekit\Framework\ServiceProviderInterface;
 
@@ -32,6 +33,10 @@ class CacheServiceProvider implements ServiceProviderInterface
 
                     case 'apc':
                         $storage = new ApcCache;
+                        break;
+                        
+                    case 'xcache':
+                        $storage = new XcacheCache;
                         break;
 
                     case 'file':

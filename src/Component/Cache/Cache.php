@@ -95,6 +95,10 @@ class Cache implements CacheInterface
         if (extension_loaded('apc') && class_exists('\APCIterator')) {
             $supports[] = 'apc';
         }
+        
+        if (extension_loaded('xcache')) {
+            $supports[] = 'xcache';
+        }
 
         return $name? in_array($name, $supports) : $supports;
     }
