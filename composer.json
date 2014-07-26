@@ -1,12 +1,12 @@
 {
     "name": "pagekit/framework",
-    "description": "Pagekit Framework",
-    "keywords": ["framework"],
+    "description": "The Pagekit Framework",
+    "keywords": ["framework", "pagekit"],
     "homepage": "http://pagekit.com",
     "license": "MIT",
     "authors": [
         {
-            "name": "Pagekit",
+            "name": "Pagekit Team",
             "email": "info@pagekit.com"
         }
     ],
@@ -30,7 +30,14 @@
         "symfony/translation": "2.5.*"
     },
     "autoload": {
-        "psr-4": { "Pagekit\\": "src" }
+        "psr-4": {
+            "Pagekit\\": "src"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.9-dev"
+        }
     },
     "minimum-stability": "dev"
 }
