@@ -1,22 +1,20 @@
 {
     "name": "pagekit/profiler",
-    "type": "library",
-    "description": "Pagekit Profiler Component",
     "homepage": "http://pagekit.com",
     "license": "MIT",
-    "authors": [],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4.0",
         "symfony/http-kernel": "2.4.*"
     },
     "autoload": {
-        "psr-0": { "Pagekit\\Component\\Profiler\\": "" }
+        "psr-4": {
+            "Pagekit\\Component\\Profiler\\": ""
+        }
     },
-    "target-dir": "Pagekit/Component/Profiler",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "0.9-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }

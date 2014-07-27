@@ -1,20 +1,19 @@
 {
     "name": "pagekit/view",
-    "type": "library",
-    "description": "Pagekit View Component",
     "homepage": "http://pagekit.com",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.4.0"
     },
     "autoload": {
-        "psr-0": { "Pagekit\\Component\\View\\": "" }
+        "psr-4": {
+            "Pagekit\\Component\\View\\": ""
+        }
     },
-    "target-dir": "Pagekit/Component/View",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "0.9-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }

@@ -1,20 +1,19 @@
 {
     "name": "pagekit/tree",
-    "type": "library",
-    "description": "Pagekit Tree Component",
     "homepage": "http://pagekit.com",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.4.0"
     },
     "autoload": {
-        "psr-0": { "Pagekit\\Component\\Tree\\": "" }
+        "psr-4": {
+            "Pagekit\\Component\\Tree\\": ""
+        }
     },
-    "target-dir": "Pagekit/Component/Tree",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "0.9-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }

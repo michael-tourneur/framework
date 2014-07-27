@@ -1,20 +1,19 @@
 {
     "name": "pagekit/filter",
-    "type": "library",
-    "description": "Pagekit Filter Component",
     "homepage": "http://pagekit.com",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.4.0"
     },
     "autoload": {
-        "psr-0": { "Pagekit\\Component\\Filter\\": "" }
+        "psr-4": {
+            "Pagekit\\Component\\Filter\\": ""
+        }
     },
-    "target-dir": "Pagekit/Component/Filter",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "0.9-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }

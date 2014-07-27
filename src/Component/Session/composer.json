@@ -1,22 +1,21 @@
 {
     "name": "pagekit/session",
-    "type": "library",
-    "description": "Pagekit Session Component",
     "homepage": "http://pagekit.com",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4.0",
         "symfony/http-foundation": "2.4.*",
         "symfony/http-kernel": "2.4.*"
     },
     "autoload": {
-        "psr-0": { "Pagekit\\Component\\Session\\": "" }
+        "psr-4": {
+            "Pagekit\\Component\\Session\\": ""
+        }
     },
-    "target-dir": "Pagekit/Component/Session",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "0.9-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
