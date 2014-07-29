@@ -195,8 +195,7 @@ class Auth
 
         $this->setUser($user);
 
-        $this->events->dispatch(AuthEvents::LOGIN, $event = new LoginEvent($user));
-        return $event->getResponse();
+        return $this->events->dispatch(AuthEvents::LOGIN, new LoginEvent($user))->getResponse();
     }
 
     /**

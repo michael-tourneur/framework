@@ -2,7 +2,9 @@
 
 namespace Pagekit\Component\Session\Handler;
 
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Pagekit\Component\Database\Connection;
 
 class DatabaseSessionHandler implements \SessionHandlerInterface
@@ -51,7 +53,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     public function destroy($id)
     {
         try {
-            $this->connection->executeQuery("DELETE FROM {$this->table} WHERE id = :id", compact('id'));
+            $this->connection->delete($this->table, ['id' => $id]);
         } catch (\PDOException $e) {
             throw new \RuntimeException(sprintf('PDOException was thrown when trying to manipulate session data: %s', $e->getMessage()), 0, $e);
         }
@@ -80,13 +82,11 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     {
         try {
 
-            $data = $this->connection->executeQuery("SELECT data FROM {$this->table} WHERE id = :id", compact('id'))->fetchColumn();
+            $data = $this->connection->executeQuery("SELECT data FROM {$this->table} WHERE id = :id", ['id' => $id])->fetchAll(\PDO::FETCH_NUM);
 
-            if ($data !== false) {
-                return base64_decode($data);
+            if ($data) {
+                return base64_decode($data[0][0]);
             }
-
-            $this->createNewSession($id);
 
             return '';
 
@@ -100,28 +100,27 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
      */
     public function write($id, $data)
     {
-        $platform = $this->connection->getDatabasePlatform();
-
-        if ($platform instanceof MySqlPlatform) {
-            $sql = "INSERT INTO {$this->table} (id, data, time) VALUES (%1\$s, %2\$s, %3\$s) "
-                  ."ON DUPLICATE KEY UPDATE data = VALUES(data), time = CASE WHEN time = %3\$s THEN (VALUES(time) + INTERVAL 1 SECOND) ELSE VALUES(time) END";
-        } else {
-            $sql = "UPDATE {$this->table} SET data = %2\$s, time = %3\$d WHERE id = %1\$s";
-        }
-
         try {
 
-            $rowCount = $this->connection->exec(sprintf(
-                $sql,
-                $this->connection->quote($id),
-                $this->connection->quote(base64_encode($data)),
-                $this->connection->quote(date('Y-m-d H:i:s'))
-            ));
+            $params = ['id' => $id, 'data' => base64_encode($data), 'time' => date('Y-m-d H:i:s')];
 
-            if (!$rowCount) {
-                // No session exists in the database to update. This happens when we have called
-                // session_regenerate_id()
-                $this->createNewSession($id, $data);
+            if (null !== $sql = $this->getMergeSql()) {
+                $this->connection->executeQuery($sql, $params);
+                return true;
+            }
+
+            $this->connection->beginTransaction();
+
+            try {
+
+                $this->connection->delete($this->table, ['id' => $id]);
+                $this->connection->insert($this->table, $params);
+                $this->connection->commit();
+
+            } catch (ConnectionException $e) {
+                $this->connection->rollback();
+
+                throw $e;
             }
 
         } catch (\PDOException $e) {
@@ -131,21 +130,20 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
         return true;
     }
 
-   /**
-    * Creates a new session with the given $id and $data
-    *
-    * @param  string $id
-    * @param  string $data
-    * @return bool
-    */
-    protected function createNewSession($id, $data = '')
+    /**
+     * Returns a merge/upsert (i.e. insert or update) SQL query when supported by the database.
+     *
+     * @return string|null The SQL string or null when not supported
+     */
+    protected function getMergeSql()
     {
-        $this->connection->exec(sprintf("INSERT INTO {$this->table} (id, data, time) VALUES (%s, %s, %s)",
-            $this->connection->quote($id),
-            $this->connection->quote(base64_encode($data)),
-            $this->connection->quote(date('Y-m-d H:i:s'))
-        ));
+        $platform = $this->connection->getDatabasePlatform();
 
-        return true;
+        if ($platform instanceof MySqlPlatform) {
+            return "INSERT INTO {$this->table} (id, data, time) VALUES (:id, :data, :time) "
+                . "ON DUPLICATE KEY UPDATE data = VALUES(data), time = CASE WHEN time = :time THEN (VALUES(time) + INTERVAL 1 SECOND) ELSE VALUES(time) END";
+        } elseif ($platform instanceof SqlitePlatform) {
+            return  "INSERT OR REPLACE INTO {$this->table} (id, data, time) VALUES (:id, :data, :time)";
+        }
     }
 }
