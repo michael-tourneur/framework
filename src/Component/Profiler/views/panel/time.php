@@ -61,16 +61,11 @@ $dumpEvents = function($events) {
     </tr>
 </table>
 
+<?php $events = $collector->getEvents() ?>
+<?php if (!isset($events['__section__'])) return ?>
+
 <h2>
     <?php echo $profile->getParent() ? "Request" : "Main Request" ?>
-    <?php $events = $collector->getEvents() ?>
-    <?php
-        if (!isset($events['__section__'])) {
-            var_dump('Section error! Please contact Steffan!!!');
-            var_dump($events, $profile, $collector);
-            exit;
-        }
-    ?>
     <small> - <?php echo $events['__section__']->getDuration() ?> ms</small>
 </h2>
 

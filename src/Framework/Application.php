@@ -28,20 +28,14 @@ class Application extends \Pimple implements HttpKernelInterface, TerminableInte
      */
     public function __construct(array $values = [])
     {
-        parent::__construct();
+        parent::__construct($values);
 
         $this['app'] = $this;
 
         $this->register(new EventServiceProvider);
         $this->register(new RoutingServiceProvider);
 
-        foreach ($values as $key => $value) {
-            $this[$key] = $value;
-        }
-
-        if (version_compare(PHP_VERSION, '5.4', '>=')) {
-            ApplicationTrait::setApplication($this);
-        }
+        ApplicationTrait::setApplication($this);
     }
 
     /**
