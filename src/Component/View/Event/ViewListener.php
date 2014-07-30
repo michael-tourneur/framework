@@ -41,11 +41,7 @@ class ViewListener implements EventSubscriberInterface
             $response = $result = $this->view->render($template, $result ?: []);
         }
 
-        if (null !== $layout = $request->attributes->get('_response[layout]', null, true)) {
-            $this->view->setLayout($layout);
-        }
-
-        if ($layout = $this->view->getLayout()) {
+        if ($layout = $request->attributes->get('_response[layout]', null, true) or (null === $layout && $layout = $this->view->getLayout())) {
             $this->view->getSections()->set('content', (string) $result);
             $dispatcher->dispatch('view.layout', $e = new LayoutEvent($layout));
             $response = $this->view->render($e->getLayout(), $e->getParameters());
