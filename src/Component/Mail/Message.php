@@ -89,7 +89,7 @@ class Message extends Swift_Message implements MessageInterface
             $attachment->setId(strpos($cid, 'cid:') === 0 ? $cid : 'cid:'.$cid);
         }
 
-        return $this->message->embed($attachment);
+        return $this->embed($attachment);
     }
 
     /**
@@ -102,7 +102,7 @@ class Message extends Swift_Message implements MessageInterface
      */
     public function embedData($data, $name, $contentType = null)
     {
-		return $this->message->embed(Swift_Image::newInstance($data, $name, $contentType));
+		return $this->embed(Swift_Image::newInstance($data, $name, $contentType));
     }
 
 	/**
@@ -123,7 +123,7 @@ class Message extends Swift_Message implements MessageInterface
 			$attachment->setFilename($name);
 		}
 
-		$this->message->attach($attachment);
+		$this->attach($attachment);
 
 		return $this;
 	}
