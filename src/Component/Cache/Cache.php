@@ -93,9 +93,11 @@ class Cache implements CacheInterface
         $supports = ['phpfile', 'array', 'file'];
 
         if (extension_loaded('apc') && class_exists('\APCIterator')) {
-            $supports[] = 'apc';
+            if (!extension_loaded('apcu') || version_compare(phpversion('apcu'), '4.0.2', '>=')) {
+                $supports[] = 'apc';
+            }
         }
-        
+
         if (extension_loaded('xcache')) {
             $supports[] = 'xcache';
         }
