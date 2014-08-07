@@ -116,15 +116,17 @@ class Renderer
         return "<del>{$text}</del>";
     }
 
-    public function link($href = '', $title = '', $text = '')
+    public function link($href = '', $title = '', $text = '', $target = '', $rel = '')
     {
         if ($this->options['sanitize'] && strpos($href, 'javascript:') === 0) {
             return '';
         }
 
-        $title = $title ? " title=\"{$title}\"" : '';
+        $title  = $title ? " title=\"{$title}\"" : '';
+        $target = $target ? " target=\"{$target}\"" : '';
+        $rel    = $rel ? " rel=\"{$rel}\"" : '';
 
-        return "<a href=\"{$href}\"{$title}>{$text}</a>";
+        return "<a href=\"{$href}\"{$title}{$target}{$rel}>{$text}</a>";
     }
 
     public function image($href = '', $title = '', $text= '')

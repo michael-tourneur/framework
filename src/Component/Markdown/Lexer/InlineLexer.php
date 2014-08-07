@@ -42,7 +42,7 @@ class InlineLexer
     public function output($src)
     {
         $out = '';
-
+        
         while ($src) {
 
             // escape
@@ -56,7 +56,7 @@ class InlineLexer
 
             // autolink
             if (preg_match($this->rules['autolink'], $src, $cap)) {
-
+                
                 $src = substr($src, strlen($cap[0]));
 
                 if ($cap[2] === '@') {
@@ -102,12 +102,15 @@ class InlineLexer
             if (preg_match($this->rules['link'], $src, $cap)) {
 
                 $src = substr($src, strlen($cap[0]));
-
+                $cap[4] = json_decode(@$cap[4]);
+                
                 $this->inLink = true;
 
                 $out .= $this->outputLink($cap, [
-                    'href'  => @$cap[2],
-                    'title' => @$cap[3]
+                    'href'      => @$cap[2],
+                    'title'     => @$cap[3],
+                    'target'    => @$cap[4]->target,
+                    'rel'       => @$cap[4]->rel
                 ]);
 
                 $this->inLink = false;
@@ -207,8 +210,10 @@ class InlineLexer
     {
         $href  = Markdown::escape($link['href']);
         $title = $link['title'] ? Markdown::escape($link['title']) : null;
+        $target = $link['target'] ? Markdown::escape($link['target']) : null;
+        $rel = $link['rel'] ? Markdown::escape($link['rel']) : null;
 
-        return $cap[0][0] !== '!' ? $this->renderer->link($href, $title, $this->output($cap[1])) : $this->renderer->image($href, $title, Markdown::escape($cap[1]));
+        return $cap[0][0] !== '!' ? $this->renderer->link($href, $title, $this->output($cap[1]), $target, $rel) : $this->renderer->image($href, $title, Markdown::escape($cap[1]), $target, $rel);
     }
 
     /**
@@ -290,7 +295,7 @@ class InlineLexer
                 'del'        => '/nooooop/',
                 'em'         => '/^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/',
                 'escape'     => '/^\\\([\\`*{}\[\]()#+\-.!_>])/',
-                'link'       => '/^!?\[((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*)\]\(\s*<?([\s\S]*?)>?(?:\s+[\'"]([\s\S]*?)[\'"])?\s*\)/',
+                'link'       => '/^!?\[((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*)\]\(\s*<?([\s\S]*?)>?(?:\s+[\'"]([\s\S]*?)[\'"])?\s*\)(\{\s*<?([\s\S]*?)>?(?:\s+[\'"]([\s\S]*?)[\'"])?\s*\})?/',
                 'nolink'     => '/^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/',
                 'reflink'    => '/^!?\[((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*)\]\s*\[([^\]]*)\]/',
                 'strong'     => '/^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/',
